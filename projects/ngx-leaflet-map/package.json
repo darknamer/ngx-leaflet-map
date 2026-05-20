@@ -1,0 +1,20 @@
+{
+  "name": "@darknamer/ngx-leaflet-map",
+  "version": "0.1.0",
+  "description": "Leaflet map for Angular (standalone) with markers, Material dialogs, and place search",
+  "keywords": ["angular", "leaflet", "map", "material", "standalone"],
+  "license": "MIT",
+  "peerDependencies": {
+    "@angular/common": ">=19.0.0 <22.0.0",
+    "@angular/core": ">=19.0.0 <22.0.0",
+    "@angular/forms": ">=19.0.0 <22.0.0",
+    "@angular/material": ">=19.0.0 <22.0.0",
+    "@angular/cdk": ">=19.0.0 <22.0.0",
+    "leaflet": "^1.9.0",
+    "rxjs": "^7.8.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

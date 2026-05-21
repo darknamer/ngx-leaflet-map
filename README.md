@@ -1,67 +1,62 @@
-# ngx-leaflet-map
+# @darknamer/ngx-leaflet-map
 
-Angular **standalone** library สำหรับฝังแผนที่ [Leaflet](https://leafletjs.com/) พร้อม Material UI — รองรับ **Angular 19 / 20 / 21**, ปักหมุด, เปิด **MatDialog** เมื่อคลิกหมุด, และค้นหาสถานที่ (Nominatim หรือ Google Places)
-
----
-
-## สิ่งที่มีใน repo นี้
-
-| ส่วน | คำอธิบาย |
-|------|----------|
-| `projects/ngx-leaflet-map/` | Library `@darknamer/ngx-leaflet-map` (publish ได้) |
-| `src/app/pages/map-demo/` | แอปตัวอย่างการใช้งานจริง |
-| `dist/ngx-leaflet-map/` | ผลลัพธ์หลัง `npm run build:lib` |
-
-**สถานะโปรเจกต์:** สร้างใหม่ทั้งหมด (เดิม repo ว่าง) — มี demo + library พร้อม build ผ่านแล้ว
+Angular **standalone** library for embedding [Leaflet](https://leafletjs.com/) maps with Angular Material UI. Supports **Angular 19 / 20 / 21**, marker pins, **MatDialog** on marker click, and place search via Nominatim or Google Places API.
 
 ---
 
-## ความสามารถหลัก
+## Repository structure
 
-- แผนที่ Leaflet + OpenStreetMap tiles (ปรับ URL ได้)
-- **Standalone components** — ไม่ใช้ `NgModule`
-- ปักหมุด: คลิกแผนที่ / เลือกจาก search
-- **Angular Material dialog** เมื่อคลิกหมุด
-- **ค้นหาสถานที่**
-  - ค่าเริ่มต้น: [Nominatim](https://nominatim.org/) (ไม่ต้องมี API key)
-  - ทางเลือก: Google Maps JavaScript API + Places (`googlePlacesApiKey`)
-- Peer dependencies รองรับ `@angular/*` และ `@angular/material` **>=19 <22**
+| Path | Description |
+|------|-------------|
+| `projects/ngx-leaflet-map/` | Library source (`@darknamer/ngx-leaflet-map`) |
+| `src/app/pages/map-demo/` | Demo application |
+| `dist/ngx-leaflet-map/` | Build output after `npm run build:lib` |
 
 ---
 
-## เริ่มต้น (พัฒนา / รัน demo)
+## Features
+
+- Leaflet map with OpenStreetMap tiles (configurable URL)
+- **Standalone components** — no `NgModule` required
+- Marker management: add by clicking the map or selecting a search result
+- **Angular Material dialog** on marker click (`MarkerInfoDialogComponent`)
+- **Place search** with debounced autocomplete (350 ms default)
+  - Default: [Nominatim](https://nominatim.org/) — no API key needed
+  - Optional: Google Maps JavaScript API + Places (`googlePlacesApiKey`)
+- Reactive via Angular **signals** (`input()`, `output()`, `effect()`)
+- Peer dependencies: `@angular/*` and `@angular/material` **>=19 <22**
+
+---
+
+## Development / running the demo
 
 ```bash
 npm install
-npm start          # http://localhost:4200 — หน้า map demo
+npm start          # http://localhost:4200
 npm run build:lib  # build library → dist/ngx-leaflet-map
 npm run build:all  # build lib + demo app
 ```
 
-### Demo ทำอะไรบ้าง
+Demo features: Bangkok map with a sample marker, Nominatim search, click-to-add markers, marker dialog, real-time marker list.
 
-- แสดงแผนที่กรุงเทพฯ พร้อมหมุดตัวอย่าง (Grand Palace)
-- Search สถานที่ (Nominatim)
-- คลิกแผนที่เพื่อเพิ่มหมุด
-- คลิกหมุดเพื่อเปิด Material dialog
-- รายการหมุดด้านล่างอัปเดตแบบ real-time
-
-ดูโค้ดตัวอย่างที่ `src/app/pages/map-demo/map-demo.component.ts`
+See `src/app/pages/map-demo/map-demo.component.ts` for example usage.
 
 ---
 
-## นำ library ไปใช้ในโปรเจกต์ Angular อื่น
-
-### 1. ติดตั้ง dependencies
+## Installation
 
 ```bash
 npm install @darknamer/ngx-leaflet-map leaflet
 npm install @angular/material @angular/cdk @angular/animations
 ```
 
-ให้เวอร์ชัน Angular / Material ตรงกับโปรเจกต์ (19, 20 หรือ 21)
+Match the Angular / Material version to your project (19, 20, or 21).
 
-### 2. เพิ่มสไตล์ Leaflet ใน `angular.json`
+---
+
+## Setup
+
+### 1. Add Leaflet styles in `angular.json`
 
 ```json
 "styles": [
@@ -70,13 +65,13 @@ npm install @angular/material @angular/cdk @angular/animations
 ]
 ```
 
-และ (แนะนำ) ใน `build.options`:
+Recommended — suppress CommonJS warning:
 
 ```json
 "allowedCommonJsDependencies": ["leaflet"]
 ```
 
-### 3. ลงทะเบียน provider (standalone / `app.config.ts`)
+### 2. Register providers (`app.config.ts`)
 
 ```typescript
 import { ApplicationConfig } from '@angular/core';
@@ -90,22 +85,20 @@ export const appConfig: ApplicationConfig = {
       defaultCenter: { lat: 13.7563, lng: 100.5018 },
       defaultZoom: 12,
       geocodingProvider: 'nominatim',
-      // ใช้ Google Places:
-      // googlePlacesApiKey: 'YOUR_API_KEY',
-      // geocodingProvider: 'google',
     }),
   ],
 };
 ```
 
-### 4. ใช้ในคอมโพเนนต์
+`provideNgxLeafletMap()` registers:
+- `NGX_LEAFLET_MAP_CONFIG` token (injected by components)
+- `PlaceSearchService` — `NominatimPlaceSearchService` by default, or `GooglePlacesSearchService` when a Google API key is supplied
+
+### 3. Use in a component
 
 ```typescript
 import { Component, signal } from '@angular/core';
-import {
-  MapMarker,
-  NgxLeafletMapComponent,
-} from '@darknamer/ngx-leaflet-map';
+import { MapMarker, NgxLeafletMapComponent } from '@darknamer/ngx-leaflet-map';
 
 @Component({
   selector: 'app-my-map',
@@ -126,69 +119,101 @@ export class MyMapComponent {
 }
 ```
 
-### 5. ติดตั้งจาก path / npm (หลัง publish)
-
-**Local path (พัฒนาร่วมกับ monorepo):**
-
-```json
-"dependencies": {
-  "@darknamer/ngx-leaflet-map": "file:dist/ngx-leaflet-map"
-}
-```
-
-**npm (หลัง publish):**
-
-```bash
-npm install @darknamer/ngx-leaflet-map
-```
-
 ---
 
-## API สรุป
+## API reference
 
 ### `provideNgxLeafletMap(config?)`
 
-| Config | คำอธิบาย |
-|--------|----------|
-| `defaultCenter` | จุดกลางเริ่มต้น `{ lat, lng }` |
-| `defaultZoom` | ระดับ zoom เริ่มต้น |
-| `geocodingProvider` | `'nominatim'` \| `'google'` |
-| `googlePlacesApiKey` | API key สำหรับ Google Maps JS + Places |
-| `tileLayerUrl` | URL template ของ tile layer |
-| `tileLayerAttribution` | ข้อความ attribution |
+| Option | Type | Description |
+|--------|------|-------------|
+| `defaultCenter` | `{ lat: number; lng: number }` | Initial map center |
+| `defaultZoom` | `number` | Initial zoom level |
+| `geocodingProvider` | `'nominatim' \| 'google'` | Place search backend |
+| `googlePlacesApiKey` | `string` | Google Maps JS API key — also switches provider to `'google'` |
+| `tileLayerUrl` | `string` | OpenStreetMap tile URL template |
+| `tileLayerAttribution` | `string` | Attribution HTML string |
 
 ### `<ngx-leaflet-map>`
 
-| Input | Default | คำอธิบาย |
-|-------|---------|----------|
-| `center` | จาก config | จุดกลางแผนที่ |
-| `zoom` | `12` | Zoom level |
-| `markers` | `[]` | รายการหมุด |
-| `height` | `480px` | ความสูง container |
-| `showSearch` | `true` | แสดงช่องค้นหา |
-| `allowAddMarker` | `true` | คลิกแผนที่แล้วเพิ่มหมุด |
-| `openDialogOnMarkerClick` | `true` | เปิด MatDialog เมื่อคลิกหมุด |
+**Inputs**
 
-| Output | คำอธิบาย |
-|--------|----------|
-| `mapReady` | `L.Map` พร้อมใช้ |
-| `mapClick` | คลิกแผนที่ |
-| `markerClick` | คลิกหมุด |
-| `markerAdded` | มีหมุดใหม่ (คลิกแผนที่ / search) |
+| Input | Default | Description |
+|-------|---------|-------------|
+| `center` | from config or `{ lat: 13.7563, lng: 100.5018 }` | Map center |
+| `zoom` | from config or `12` | Zoom level |
+| `markers` | `[]` | Array of `MapMarker` — reactive via signal `effect()` |
+| `height` | `'480px'` | CSS height of the map container |
+| `showSearch` | `true` | Show the search overlay |
+| `allowAddMarker` | `true` | Add marker on map click or search selection |
+| `openDialogOnMarkerClick` | `true` | Open `MatDialog` on marker click |
 
-### `<ngx-leaflet-map-search>` (ใช้แยกได้)
+**Outputs**
 
-คอมโพเนนต์ Material autocomplete สำหรับค้นหา — emit `placeSelected` เมื่อเลือกผลลัพธ์
+| Output | Payload | Description |
+|--------|---------|-------------|
+| `mapReady` | `L.Map` | Fired once the Leaflet map is initialized |
+| `mapClick` | `MapClickEvent` | Raw map click with `{ latlng }` |
+| `markerClick` | `MarkerClickEvent` | Marker clicked — fires before dialog opens |
+| `markerAdded` | `MapMarker` | New marker added (map click or search) |
+| `placeSelected` | `PlaceSearchResult` | Search result selected (fires before `markerAdded`) |
 
-### `MapMarker`
+**Public methods**
+
+| Method | Description |
+|--------|-------------|
+| `flyTo(latlng, zoom?)` | Animate map to a position |
+| `addMarker(marker)` | Programmatically add a marker |
+
+### `<ngx-leaflet-map-search>` (standalone)
+
+Material autocomplete component for place search. Can be used independently outside `<ngx-leaflet-map>`.
+
+**Inputs**
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `label` | `'Search places'` | Form field label |
+| `placeholder` | `'City, address, landmark…'` | Input placeholder |
+| `debounceMs` | `350` | Debounce delay before triggering search |
+
+**Outputs**
+
+| Output | Payload | Description |
+|--------|---------|-------------|
+| `placeSelected` | `PlaceSearchResult` | Emitted when user selects an autocomplete result |
+
+---
+
+## Models
 
 ```typescript
+interface LatLng {
+  lat: number;
+  lng: number;
+}
+
 interface MapMarker {
   id: string;
-  position: { lat: number; lng: number };
+  position: LatLng;
   title?: string;
   description?: string;
   draggable?: boolean;
+}
+
+interface PlaceSearchResult {
+  displayName: string;
+  lat: number;
+  lng: number;
+  placeId?: string;
+}
+
+interface MapClickEvent {
+  latlng: LatLng;
+}
+
+interface MarkerClickEvent {
+  marker: MapMarker;
 }
 ```
 
@@ -196,9 +221,9 @@ interface MapMarker {
 
 ## Google Places API
 
-1. สร้าง API key ใน [Google Cloud Console](https://console.cloud.google.com/)
-2. เปิด **Maps JavaScript API** และ **Places API**
-3. ตั้งค่าใน `provideNgxLeafletMap`:
+1. Create an API key in [Google Cloud Console](https://console.cloud.google.com/)
+2. Enable **Maps JavaScript API** and **Places API**
+3. Pass the key to `provideNgxLeafletMap`:
 
 ```typescript
 provideNgxLeafletMap({
@@ -207,59 +232,79 @@ provideNgxLeafletMap({
 });
 ```
 
-หมายเหตุ: การเรียกจาก browser จะโหลดสคริปต์ `maps.googleapis.com` อัตโนมัติ — ควรจำกัด key ตาม domain
+The library loads `maps.googleapis.com/maps/api/js?libraries=places` lazily on the first search. Restrict the key to your domain in the Google Cloud Console.
 
 ---
 
-## พัฒนา / Publish library
-
-```bash
-# build APF package
-npm run build:lib
-
-# ทดสอบในโปรเจกต์อื่นชั่วคราว
-cd dist/ngx-leaflet-map && npm pack
-```
-
-ก่อน publish จริง:
-
-1. ปรับ `version` ใน `projects/ngx-leaflet-map/package.json`
-2. `npm publish dist/ngx-leaflet-map --access public` (ถ้าใช้ scope `@darknamer`)
-3. อัปเดต README และ changelog
-
-### โครงสร้าง library
+## Architecture
 
 ```
 projects/ngx-leaflet-map/src/lib/
 ├── components/
-│   ├── ngx-leaflet-map.component.ts      # แผนที่หลัก
-│   ├── ngx-leaflet-map-search.component.ts
-│   └── marker-info-dialog.component.ts
+│   ├── ngx-leaflet-map.component.ts        # Main map component
+│   ├── ngx-leaflet-map-search.component.ts # Autocomplete search
+│   └── marker-info-dialog.component.ts     # MatDialog content
 ├── services/
-│   ├── place-search.service.ts           # Nominatim + Google
-│   └── google-maps-global.ts
-├── providers/provide-ngx-leaflet-map.ts
-├── models/map.models.ts
-└── tokens/ngx-leaflet-map-config.token.ts
+│   ├── place-search.service.ts             # Abstract + Nominatim + Google impls
+│   └── google-maps-global.ts              # window.google accessor
+├── providers/
+│   └── provide-ngx-leaflet-map.ts          # provideNgxLeafletMap()
+├── models/
+│   └── map.models.ts                       # All interfaces and types
+├── tokens/
+│   └── ngx-leaflet-map-config.token.ts     # NGX_LEAFLET_MAP_CONFIG InjectionToken
+└── utils/
+    └── leaflet-default-icon.ts             # Fixes Leaflet default icon paths
+```
+
+**Key design decisions:**
+- Markers are synced via `effect()` — `syncMarkers()` diffs the current `leafletMarkers` Map against the new input array, removing stale markers and upserting new ones.
+- `PlaceSearchService` is abstract; `provideNgxLeafletMap()` selects the concrete implementation based on config, so the component never depends on either backend directly.
+- Google Maps script is loaded once and cached via a `Promise` to avoid duplicate `<script>` tags.
+
+---
+
+## Publishing
+
+```bash
+# Build APF package
+npm run build:lib
+
+# Pack for local testing in another project
+cd dist/ngx-leaflet-map && npm pack
+```
+
+Before publishing:
+1. Bump `version` in `projects/ngx-leaflet-map/package.json`
+2. `npm publish dist/ngx-leaflet-map --access public`
+
+**Local path dependency (monorepo):**
+```json
+"dependencies": {
+  "@darknamer/ngx-leaflet-map": "file:dist/ngx-leaflet-map"
+}
 ```
 
 ---
 
-## รองรับ Angular Material 19 / 20 / 21
-
-Library ประกาศ peer dependency:
+## Peer dependencies
 
 ```json
-"@angular/material": ">=19.0.0 <22.0.0"
+"@angular/common":   ">=19.0.0 <22.0.0",
+"@angular/core":     ">=19.0.0 <22.0.0",
+"@angular/forms":    ">=19.0.0 <22.0.0",
+"@angular/material": ">=19.0.0 <22.0.0",
+"@angular/cdk":      ">=19.0.0 <22.0.0",
+"leaflet":           "^1.9.0",
+"rxjs":              "^7.8.0"
 ```
-
-ให้ติดตั้ง Material เวอร์ชันเดียวกับ `@angular/core` ในแอปของคุณ (เช่น Angular 20 → Material 20)
 
 ---
 
-## ข้อควรทราบ (Nominatim)
+## Notes
 
-Nominatim มี [นโยบายการใช้งาน](https://operations.osmfoundation.org/policies/nominatim/) — เหมาะสำหรับ demo / ปริมาณต่ำ สำหรับ production ควรใช้ Google Places หรือ geocoding server ของตัวเอง
+- **Nominatim usage policy:** Nominatim has a [usage policy](https://operations.osmfoundation.org/policies/nominatim/) — suitable for development and low-traffic use. For production, use Google Places or a self-hosted geocoder.
+- **SSR / Angular Universal:** The library uses `document` and `window` directly during map initialization. Wrap in `isPlatformBrowser()` guard if SSR is needed.
 
 ---
 

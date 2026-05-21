@@ -7,6 +7,7 @@ import {
   input,
   OnDestroy,
   output,
+  OutputEmitterRef,
   viewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -80,11 +81,11 @@ export class NgxLeafletMapComponent implements AfterViewInit, OnDestroy {
   readonly allowAddMarker = input(true);
   readonly openDialogOnMarkerClick = input(true);
 
-  readonly mapReady = output<L.Map>();
-  readonly mapClick = output<MapClickEvent>();
-  readonly markerClick = output<MarkerClickEvent>();
-  readonly markerAdded = output<MapMarker>();
-  readonly placeSelected = output<PlaceSearchResult>();
+  readonly mapReady: OutputEmitterRef<L.Map> = output<L.Map>();
+  readonly mapClick: OutputEmitterRef<MapClickEvent> = output<MapClickEvent>();
+  readonly markerClick: OutputEmitterRef<MarkerClickEvent> = output<MarkerClickEvent>();
+  readonly markerAdded: OutputEmitterRef<MapMarker> = output<MapMarker>();
+  readonly placeSelected: OutputEmitterRef<PlaceSearchResult> = output<PlaceSearchResult>();
 
   private map?: L.Map;
   private tileLayer?: L.TileLayer;

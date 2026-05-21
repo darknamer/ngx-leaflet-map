@@ -1,4 +1,12 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  output,
+  OutputEmitterRef,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -62,11 +70,12 @@ export class NgxLeafletMapSearchComponent {
   readonly placeholder = input('City, address, landmark…');
   readonly debounceMs = input(350);
 
-  readonly placeSelected = output<PlaceSearchResult>();
+  readonly placeSelected: OutputEmitterRef<PlaceSearchResult> =
+    output<PlaceSearchResult>();
 
   protected query = '';
-  protected readonly results = signal<PlaceSearchResult[]>([]);
-  protected readonly loading = signal(false);
+  protected readonly results: WritableSignal<PlaceSearchResult[]> = signal([]);
+  protected readonly loading: WritableSignal<boolean> = signal(false);
 
   private debounceTimer?: ReturnType<typeof setTimeout>;
 

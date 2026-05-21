@@ -84,6 +84,7 @@ export class NgxLeafletMapComponent implements AfterViewInit, OnDestroy {
   readonly mapClick = output<MapClickEvent>();
   readonly markerClick = output<MarkerClickEvent>();
   readonly markerAdded = output<MapMarker>();
+  readonly placeSelected = output<PlaceSearchResult>();
 
   private map?: L.Map;
   private tileLayer?: L.TileLayer;
@@ -119,6 +120,7 @@ export class NgxLeafletMapComponent implements AfterViewInit, OnDestroy {
   }
 
   onPlaceSelected(place: PlaceSearchResult): void {
+    this.placeSelected.emit(place);
     this.flyTo({ lat: place.lat, lng: place.lng }, 15);
     if (this.allowAddMarker()) {
       const marker: MapMarker = {

@@ -22,7 +22,7 @@ import { PlaceSearchService } from '../services/place-search.service';
   template: `
     <mat-form-field class="search-field" appearance="outline" subscriptSizing="dynamic">
       <mat-label>{{ label() }}</mat-label>
-      <mat-icon matPrefix>search</mat-icon>
+      <!-- <mat-icon matPrefix>search</mat-icon> -->
       <input
         matInput
         type="search"

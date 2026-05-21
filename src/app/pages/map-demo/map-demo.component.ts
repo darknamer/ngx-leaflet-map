@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -7,6 +7,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import {
   MapMarker,
   NgxLeafletMapComponent,
+  NgxLeafletMapSearchComponent,
+  PlaceSearchResult,
 } from 'ngx-leaflet-map';
 
 @Component({
@@ -19,6 +21,7 @@ import {
     MatCardModule,
     MatSlideToggleModule,
     NgxLeafletMapComponent,
+    NgxLeafletMapSearchComponent,
   ],
   template: `
     <mat-toolbar color="primary">
@@ -34,15 +37,23 @@ import {
           </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <mat-slide-toggle [(ngModel)]="allowAddMarker" labelPosition="before">
-            Allow adding markers (map click / search)
-          </mat-slide-toggle>
+          <div class="controls-row">
+            <ngx-leaflet-map-search
+              #search
+              class="search"
+              (placeSelected)="onPlaceSelected($event)"
+            />
+            <mat-slide-toggle [(ngModel)]="allowAddMarker" labelPosition="before">
+              Allow adding markers
+            </mat-slide-toggle>
+          </div>
 
           <ngx-leaflet-map
+            #mapRef
             class="map"
             [markers]="markers()"
             [allowAddMarker]="allowAddMarker"
-            [showSearch]="true"
+            [showSearch]="false"
             height="520px"
             (markerAdded)="onMarkerAdded($event)"
           />
@@ -80,6 +91,17 @@ import {
       padding: 16px;
     }
 
+    .controls-row {
+      align-items: center;
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .search {
+      flex: 1;
+    }
+
     .map {
       display: block;
       margin-top: 16px;
@@ -93,6 +115,7 @@ import {
 })
 export class MapDemoComponent {
   protected allowAddMarker = true;
+  protected readonly mapRef = viewChild.required<NgxLeafletMapComponent>('mapRef');
   protected readonly markers = signal<MapMarker[]>([
     {
       id: 'demo-grand-palace',
@@ -101,6 +124,10 @@ export class MapDemoComponent {
       description: 'Example marker — click to open Material dialog',
     },
   ]);
+
+  onPlaceSelected(place: PlaceSearchResult): void {
+    this.mapRef().onPlaceSelected(place);
+  }
 
   onMarkerAdded(marker: MapMarker): void {
     this.markers.update((list) => [...list, marker]);

@@ -46,7 +46,7 @@ jobs:
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: darknamer-40b10
+          projectId: ngx-leaflet-map
           channelId: live
 
       - name: Purge old artifacts (keep latest 10)

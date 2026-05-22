@@ -2,6 +2,8 @@
 
 Angular **standalone** library for embedding [Leaflet](https://leafletjs.com/) maps with Angular Material UI. Supports **Angular 19 / 20 / 21**, marker pins, **MatDialog** on marker click, and place search via Nominatim or Google Places API.
 
+**Live demo:** [https://ngx-leaflet-map.darknamer.com/](https://ngx-leaflet-map.darknamer.com/)
+
 ---
 
 ## Repository structure

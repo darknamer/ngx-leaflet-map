@@ -8,11 +8,11 @@ Angular **standalone** library for embedding [Leaflet](https://leafletjs.com/) m
 
 ## Repository structure
 
-| Path | Description |
-|------|-------------|
+| Path                        | Description                                   |
+| --------------------------- | --------------------------------------------- |
 | `projects/ngx-leaflet-map/` | Library source (`@darknamer/ngx-leaflet-map`) |
-| `src/app/pages/map-demo/` | Demo application |
-| `dist/ngx-leaflet-map/` | Build output after `npm run build:lib` |
+| `src/app/pages/map-demo/`   | Demo application                              |
+| `dist/ngx-leaflet-map/`     | Build output after `npm run build:lib`        |
 
 ---
 
@@ -127,45 +127,45 @@ export class MyMapComponent {
 
 ### `provideNgxLeafletMap(config?)`
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `defaultCenter` | `{ lat: number; lng: number }` | Initial map center |
-| `defaultZoom` | `number` | Initial zoom level |
-| `geocodingProvider` | `'nominatim' \| 'google'` | Place search backend |
-| `googlePlacesApiKey` | `string` | Google Maps JS API key — also switches provider to `'google'` |
-| `tileLayerUrl` | `string` | OpenStreetMap tile URL template |
-| `tileLayerAttribution` | `string` | Attribution HTML string |
+| Option                 | Type                           | Description                                                   |
+| ---------------------- | ------------------------------ | ------------------------------------------------------------- |
+| `defaultCenter`        | `{ lat: number; lng: number }` | Initial map center                                            |
+| `defaultZoom`          | `number`                       | Initial zoom level                                            |
+| `geocodingProvider`    | `'nominatim' \| 'google'`      | Place search backend                                          |
+| `googlePlacesApiKey`   | `string`                       | Google Maps JS API key — also switches provider to `'google'` |
+| `tileLayerUrl`         | `string`                       | OpenStreetMap tile URL template                               |
+| `tileLayerAttribution` | `string`                       | Attribution HTML string                                       |
 
 ### `<ngx-leaflet-map>`
 
 **Inputs**
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| `center` | from config or `{ lat: 13.7563, lng: 100.5018 }` | Map center |
-| `zoom` | from config or `12` | Zoom level |
-| `markers` | `[]` | Array of `MapMarker` — reactive via signal `effect()` |
-| `height` | `'480px'` | CSS height of the map container |
-| `showSearch` | `true` | Show the search overlay |
-| `allowAddMarker` | `true` | Add marker on map click or search selection |
-| `openDialogOnMarkerClick` | `true` | Open `MatDialog` on marker click |
+| Input                     | Default                                          | Description                                           |
+| ------------------------- | ------------------------------------------------ | ----------------------------------------------------- |
+| `center`                  | from config or `{ lat: 13.7563, lng: 100.5018 }` | Map center                                            |
+| `zoom`                    | from config or `12`                              | Zoom level                                            |
+| `markers`                 | `[]`                                             | Array of `MapMarker` — reactive via signal `effect()` |
+| `height`                  | `'480px'`                                        | CSS height of the map container                       |
+| `showSearch`              | `true`                                           | Show the search overlay                               |
+| `allowAddMarker`          | `true`                                           | Add marker on map click or search selection           |
+| `openDialogOnMarkerClick` | `true`                                           | Open `MatDialog` on marker click                      |
 
 **Outputs**
 
-| Output | Payload | Description |
-|--------|---------|-------------|
-| `mapReady` | `L.Map` | Fired once the Leaflet map is initialized |
-| `mapClick` | `MapClickEvent` | Raw map click with `{ latlng }` |
-| `markerClick` | `MarkerClickEvent` | Marker clicked — fires before dialog opens |
-| `markerAdded` | `MapMarker` | New marker added (map click or search) |
+| Output          | Payload             | Description                                         |
+| --------------- | ------------------- | --------------------------------------------------- |
+| `mapReady`      | `L.Map`             | Fired once the Leaflet map is initialized           |
+| `mapClick`      | `MapClickEvent`     | Raw map click with `{ latlng }`                     |
+| `markerClick`   | `MarkerClickEvent`  | Marker clicked — fires before dialog opens          |
+| `markerAdded`   | `MapMarker`         | New marker added (map click or search)              |
 | `placeSelected` | `PlaceSearchResult` | Search result selected (fires before `markerAdded`) |
 
 **Public methods**
 
-| Method | Description |
-|--------|-------------|
-| `flyTo(latlng, zoom?)` | Animate map to a position |
-| `addMarker(marker)` | Programmatically add a marker |
+| Method                 | Description                   |
+| ---------------------- | ----------------------------- |
+| `flyTo(latlng, zoom?)` | Animate map to a position     |
+| `addMarker(marker)`    | Programmatically add a marker |
 
 ### `<ngx-leaflet-map-search>` (standalone)
 
@@ -173,16 +173,16 @@ Material autocomplete component for place search. Can be used independently outs
 
 **Inputs**
 
-| Input | Default | Description |
-|-------|---------|-------------|
-| `label` | `'Search places'` | Form field label |
-| `placeholder` | `'City, address, landmark…'` | Input placeholder |
-| `debounceMs` | `350` | Debounce delay before triggering search |
+| Input         | Default                      | Description                             |
+| ------------- | ---------------------------- | --------------------------------------- |
+| `label`       | `'Search places'`            | Form field label                        |
+| `placeholder` | `'City, address, landmark…'` | Input placeholder                       |
+| `debounceMs`  | `350`                        | Debounce delay before triggering search |
 
 **Outputs**
 
-| Output | Payload | Description |
-|--------|---------|-------------|
+| Output          | Payload             | Description                                      |
+| --------------- | ------------------- | ------------------------------------------------ |
 | `placeSelected` | `PlaceSearchResult` | Emitted when user selects an autocomplete result |
 
 ---
